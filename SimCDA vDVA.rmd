@@ -1,0 +1,75 @@
+
+library(psych)
+library(writexl)
+
+###Import the keep set of combinations that met the constraints
+keep <- read.csv("C:\\Users\\steph\\Desktop\\CSE 6242\\proj21_import_mean0.csv", header = TRUE)
+
+
+
+keep <- read.csv("proj21_import_test.csv", header = TRUE)
+keep
+
+
+
+
+
+###Please note that the below simulation took 2 hours to run on my machine
+
+x <- data.frame(matrix(NA_real_,nrow=10000))
+
+print(keep[1,])
+print(keep[9,])
+
+for (i in 1:9){
+j<-keep[i,]
+
+
+# Each replication of this simulation generates a random number for each category with the mean that equals each team's mean for that category
+# Then it generates a probability that that value will be greater than 0 for each category
+# Then it sums those values for each cateogry and if the sum is greater than 4.5 (9 categories / 2) then it assigns a 1 to represent win for that team for that replication, else it assigns a 0 for a loss
+#This is repeated 10,000 times (could potentially get away with less) and a team's estimated winning percentage is calculated as the number of wins divided by 10,000
+sim_import <- replicate(
+  10000,
+  {
+     # Your code that creates the random dataset and runs ANOVA
+
+  rcat1 <- rnorm(1, mean = as.numeric(j[2]), sd = 10)
+  rcat2 <- rnorm(1, mean = as.numeric(j[3]), sd = 10)
+  rcat3 <- rnorm(1, mean = as.numeric(j[4]), sd = 10)
+  rcat4 <- rnorm(1, mean = as.numeric(j[5]), sd = 10)
+  rcat5 <- rnorm(1, mean = as.numeric(j[6]), sd = 10)
+  rcat6 <- rnorm(1, mean = as.numeric(j[7]), sd = 10)
+  rcat7 <- rnorm(1, mean = as.numeric(j[8]), sd = 10)
+  rcat8 <- rnorm(1, mean = as.numeric(j[9]), sd = 10)
+  rcat9 <- rnorm(1, mean = as.numeric(j[10]), sd = 10)
+
+  wrcat1 <- pnorm(rcat1, mean = 0, sd = 10, lower.tail = TRUE)
+  wrcat2 <- pnorm(rcat2, mean = 0, sd = 10, lower.tail = TRUE)
+  wrcat3 <- pnorm(rcat3, mean = 0, sd = 10, lower.tail = TRUE)
+  wrcat4 <- pnorm(rcat4, mean = 0, sd = 10, lower.tail = TRUE)
+  wrcat5 <- pnorm(rcat5, mean = 0, sd = 10, lower.tail = TRUE)
+  wrcat6 <- pnorm(rcat6, mean = 0, sd = 10, lower.tail = TRUE)
+  wrcat7 <- pnorm(rcat7, mean = 0, sd = 10, lower.tail = TRUE)
+  wrcat8 <- pnorm(rcat8, mean = 0, sd = 10, lower.tail = TRUE)
+  wrcat9 <- pnorm(rcat9, mean = 0, sd = 10, lower.tail = TRUE)
+
+  if (wrcat1 + wrcat2 + wrcat3 + wrcat4 + wrcat5 + wrcat6 + wrcat7 + wrcat8 + wrcat9 >= 4.5) {win_binary <- 1} else {win_binary <- 0}
+
+
+  }, simplify = "array"
+)
+
+x[[i]] <- sim_import
+print(i)
+}
+head(x)
+class(x)
+
+x = as.data.frame(x)
+head(x)
+class(x)
+
+
+write_xlsx(x,path="C:\\Users\\steph\\Desktop\\CSE 6242\\proj21_export_mean0.xlsx")
+
